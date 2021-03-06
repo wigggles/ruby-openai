@@ -6,6 +6,18 @@ module OpenAI
     def initialize(access_token: nil)
       @access_token = access_token || ENV["OPENAI_ACCESS_TOKEN"]
     end
+    
+    def check_engines()
+      response = self.class.get(
+        "/#{default_version}/engines",
+        headers: {
+          "Content-Type"  => "application/json",
+          "Authorization" => "Bearer #{@access_token}"
+        }
+      )
+      puts response["data"].map{|e| "#{e["id"]}: #{e["ready"]}"}
+      return response
+    end
 
     def completions(engine:, version: default_version, parameters: {})
       self.class.post(
